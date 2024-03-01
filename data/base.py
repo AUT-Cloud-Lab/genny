@@ -1,4 +1,6 @@
+import json
 import numpy as np
+
 from typing import Tuple, List
 from dataclasses import dataclass
 
@@ -29,3 +31,25 @@ class Config:
     cycle_length: int # ms
     number_of_cycles: int
     threshold: int # rate limit threshold of the HPA
+
+def load_config(path: str) -> Config:
+    with open(path, "r") as f:
+        data = json.load(f)
+    
+    deployments = [
+        Deployment(
+            deployment["name"], 
+            deployment["endpoint"], 
+            np.array(deployment["resources"])
+        ) for deployment in data["deployments"]
+    ]
+    
+    nodes = [
+        Node(
+            data["name"], 
+            np.array(data["resources"]), 
+            data["is_on_edge"]
+        ) for data in data["nodes"]
+    ]
+    
+    return Config(deployments, nodes, data["cycle_length"], data["number_of_cycles"], data["threshold"])

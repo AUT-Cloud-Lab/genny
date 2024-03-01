@@ -9,7 +9,7 @@ from data.base import Deployment, Config
 class Frame:
     replicas: Dict[Deployment, int]
 
-    def evaluate(self, config: Config) -> float:
+    def evaluate(self, config: Config) -> np.ndarray:
         resource_shape = config.nodes[0].resources.shape
         resource_requested = np.zeros(resource_shape)
         for deployment, replica in self.replicas.items():
