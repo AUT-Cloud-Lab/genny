@@ -23,26 +23,23 @@ class NormalScenario(Scenario):
       raise Exception()
   
   def generate(self) -> List[Frame]:
-    all_deployments_resources = sum([deployment.resources for deployment in self.config.deployments])
     edge_resources = sum([node.resources for node in self.config.nodes if node.is_on_edge])
-    
-    multiplications = edge_resources/all_deployments_resources
-    multiplication = sum(multiplications)/len(multiplications)
-    
+        
     frames: List[Frame] = [Frame(replicas={}) for _ in range(self.config.number_of_cycles)]
 
     for deployment in self.config.deployments:
-      shares = deployment.resources/all_deployments_resources
-      share = sum(shares)/len(shares)
+      share = edge_resources / len(self.config.deployments) / deployment.resources
+      coef = sum(share)/len(share)
       
-      coef = multiplication * share
       mean_replica = self.mean * coef
       sigma_replica = self.sigma * coef
       replicas = list(np.random.normal(mean_replica, sigma_replica, self.config.number_of_cycles))
+      print(f"{coef}")
       for i in range(len(replicas)):
         replicas[i] = max(replicas[i], 1)
         replicas[i] = round(replicas[i])
 
         frames[i].replicas[deployment] = replicas[i]
+      print(replicas)
 
     return frames 
