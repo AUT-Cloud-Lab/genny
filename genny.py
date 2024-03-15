@@ -1,7 +1,7 @@
 import sys
 
 from data.base import load_config
-from data.scen import cycles_to_json
+from data.scen import cycles_content
 
 from scenarios.decorators import scenarios_dict
 
@@ -21,9 +21,13 @@ def main():
   
   scenario = Scenario_cls(sys.argv[2:], config)
   frames = scenario.generate()
+  (scenario_path, resource_path) = scenario.get_out_paths()
 
-  with open("scen.json", "w") as f:
-    f.write(cycles_to_json(frames, config))
+  scenario_content, resource_content = cycles_content(frames, config)
+  with open(scenario_path, "w") as f:
+    f.write(scenario_content)
+  with open(resource_path, "w") as f:
+    f.write(resource_content)
   
   return 0
 

@@ -23,13 +23,13 @@ class Frame:
         return resource_requested
 
 
-def cycles_to_json(frames: List[Frame], config: Config) -> str:
+def cycles_content(frames: List[Frame], config: Config) -> Tuple[str, str]:
     frames_resource_requested = [frame.evaluate(config) for frame in frames]
     
-    with open("resource_requested.csv", "w") as f:
-        f.write("CPU(cores),Memory(GB)\n")
-        for resource_requested in frames_resource_requested:
-            f.write(f"{resource_requested[0]},{resource_requested[1]}\n")
+    resource_content = ""
+    resource_content += "CPU(cores),Memory(GB)\n"
+    for resource_requested in frames_resource_requested:
+        resource_content += f"{resource_requested[0]},{resource_requested[1]}\n"
 
     apis: List[Dict[str, Any]] = []
 
@@ -65,4 +65,4 @@ def cycles_to_json(frames: List[Frame], config: Config) -> str:
         api["intervals"] = intervals
         apis.append(api)
     
-    return json.dumps({"apis": apis})
+    return json.dumps({"apis": apis}, indent=2), resource_content

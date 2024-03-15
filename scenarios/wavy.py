@@ -21,6 +21,9 @@ class WavyScenario(Scenario):
       
       raise Exception()
   
+  def get_properties(self) -> str:
+    return [self.base_usage]
+
   def generate(self) -> List[Frame]:
     edge_resources = sum([node.resources for node in self.config.nodes if node.is_on_edge])
     all_resources = sum([node.resources for node in self.config.nodes])

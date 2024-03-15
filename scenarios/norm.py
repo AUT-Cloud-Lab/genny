@@ -22,6 +22,9 @@ class NormalScenario(Scenario):
       
       raise Exception()
   
+  def get_properties(self) -> str:
+    return [self.mean, self.sigma]
+
   def generate(self) -> List[Frame]:
     edge_resources = sum([node.resources for node in self.config.nodes if node.is_on_edge])
         
@@ -36,8 +39,8 @@ class NormalScenario(Scenario):
       replicas = list(np.random.normal(mean_replica, sigma_replica, self.config.number_of_cycles))
       print(f"{coef}")
       for i in range(len(replicas)):
-        replicas[i] = max(replicas[i], 1)
         replicas[i] = round(replicas[i])
+        replicas[i] = max(replicas[i], 1)
 
         frames[i].replicas[deployment] = replicas[i]
       print(replicas)
