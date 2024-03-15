@@ -15,6 +15,7 @@ class WavyScenario(Scenario):
         try:
             # mean: base usage of edge usage (0: Minimum, 1: Maximum]
             self.base_usage = float(command_args[0])
+            self.number_of_deployments = int(command_args[1])
             self.config = config
         except Exception as e:
             print("Could not parse the command arguments due to the following error:")
@@ -65,9 +66,11 @@ class WavyScenario(Scenario):
             }
 
         cycles_start = 0
-        for (deployment_ind, deployment) in enumerate(self.config.deployments):
+        for (deployment_ind, deployment) in enumerate(
+            self.config.deployments[: self.number_of_deployments]
+        ):
             cycles_len = (self.config.number_of_cycles - cycles_start) // (
-                len(self.config.deployments) - deployment_ind
+                self.number_of_deployments - deployment_ind
             )
             cycle_end = cycles_start + cycles_len
 
