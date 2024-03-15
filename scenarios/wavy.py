@@ -24,7 +24,7 @@ class WavyScenario(Scenario):
             raise Exception()
 
     def get_properties(self) -> str:
-        return [self.base_usage]
+        return [self.base_usage, self.number_of_deployments]
 
     def generate(self) -> List[Frame]:
         edge_resources = sum(
