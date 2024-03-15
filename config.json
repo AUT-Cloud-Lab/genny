@@ -43,7 +43,7 @@
       "resources": [17, 22]
     }
   ],
-  "cycle_length": 120000,
-  "number_of_cycles": 10,
+  "cycle_length": 90000,
+  "number_of_cycles": 12,
   "threshold": 5
 }
