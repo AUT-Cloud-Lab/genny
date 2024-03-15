@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from data.base import Deployment, Config
 
+
 @dataclass
 class Frame:
     replicas: Dict[Deployment, int]
@@ -14,18 +15,20 @@ class Frame:
         resource_requested = np.zeros(resource_shape)
         for deployment, replica in self.replicas.items():
             if replica <= 0:
-                raise ValueError(f"Replica count of {deployment.name} is {replica}, which is invalid.")
+                raise ValueError(
+                    f"Replica count of {deployment.name} is {replica}, which is invalid."
+                )
             resource_requested += replica * deployment.resources
-        
+
         if any(resource_requested > sum([node.resources for node in config.nodes])):
             raise ValueError("Resource usage exceeds the total capacity.")
-        
+
         return resource_requested
 
 
 def cycles_content(frames: List[Frame], config: Config) -> Tuple[str, str]:
     frames_resource_requested = [frame.evaluate(config) for frame in frames]
-    
+
     resource_content = ""
     resource_content += "CPU(cores),Memory(GB)\n"
     for resource_requested in frames_resource_requested:
@@ -37,8 +40,9 @@ def cycles_content(frames: List[Frame], config: Config) -> Tuple[str, str]:
         api: Dict[str, Any] = {}
         api["name"] = deployment.name
         api["endpoint"] = deployment.endpoint
-        
+
         intervals: List[Dict[str, Any]] = []
+
         def get_interval(replica, cnt):
             interval = {}
 
@@ -48,21 +52,21 @@ def cycles_content(frames: List[Frame], config: Config) -> Tuple[str, str]:
             interval["cycle_length"] = length
 
             return interval
-        
+
         cnt = 1
         last_replica = frames[0].replicas[deployment]
         for i in range(1, len(frames)):
             if last_replica == frames[i].replicas[deployment]:
                 cnt += 1
                 continue
-            
+
             intervals.append(get_interval(last_replica, cnt))
-            
+
             last_replica = frames[i].replicas[deployment]
             cnt = 1
-        
+
         intervals.append(get_interval(last_replica, cnt))
         api["intervals"] = intervals
         apis.append(api)
-    
+
     return json.dumps({"apis": apis}, indent=2), resource_content
