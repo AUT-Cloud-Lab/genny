@@ -49,7 +49,12 @@ def load_config(path: str) -> Config:
     ]
 
     nodes = [
-        Node(data["name"], np.array(data["resources"]), data["is_on_edge"])
+        Node(
+            data["name"],
+            # Removing 1 core, and 1 GB of memory from each node's resources
+            np.array(list(map(lambda r: r-1, data["resources"]))), 
+            data["is_on_edge"]
+        )
         for data in data["nodes"]
     ]
 
