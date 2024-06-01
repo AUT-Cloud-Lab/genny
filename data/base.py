@@ -1,8 +1,8 @@
 import json
-import numpy as np
-
-from typing import Tuple, List
 from dataclasses import dataclass
+from typing import List
+
+import numpy as np
 
 
 @dataclass
@@ -52,7 +52,7 @@ def load_config(path: str) -> Config:
         Node(
             data["name"],
             # Removing 1 core, and 1 GB of memory from each node's resources
-            np.array(list(map(lambda r: r-1, data["resources"]))), 
+            np.array(list(map(lambda r: r-1, data["resources"]))),
             data["is_on_edge"]
         )
         for data in data["nodes"]

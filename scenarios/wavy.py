@@ -1,10 +1,10 @@
+import os
+from typing import List, Dict, Tuple
+
 import numpy as np
 
-from typing import List, Dict
-
-from data.scen import Frame
 from data.base import Config, Deployment
-
+from data.scen import Frame
 from scenarios.base import Scenario
 from scenarios.decorators import register_scenario
 
@@ -23,6 +23,25 @@ class WavyScenario(Scenario):
 
             raise Exception()
 
+    def get_out_paths(self) -> Tuple[str, str]:
+        if not os.path.exists("out"):
+            print(
+                f"""
+            No out direction found or multiple out directories found.
+            Path: {os.getcwd()}
+            """
+            )
+
+        base_dir = "out"
+        base_dir = os.path.join(base_dir, self.name)
+        self.ensure_directory(base_dir)
+
+        f_name = "_".join(map(str, self.get_properties()))
+        return (
+            os.path.join(base_dir, f"wavy_scenario_{f_name}.json"),
+            os.path.join(base_dir, f"wavy_resource_{f_name}.csv"),
+        )
+
     def get_properties(self) -> str:
         return [self.base_usage, self.number_of_deployments]
 
@@ -32,7 +51,7 @@ class WavyScenario(Scenario):
         )
         all_resources = sum([node.resources for node in self.config.nodes])
 
-        # INFO reducing couple of cores and gigabytes of memory for safety
+        # INFO reducing a couple of cores and gigabytes of memory for safety
         all_resources -= np.array([2, 2])
 
         frames: List[Frame] = [
@@ -42,10 +61,10 @@ class WavyScenario(Scenario):
         base_state: Dict[Deployment, int] = {}
         for deployment in self.config.deployments:
             share = (
-                edge_resources
-                * self.base_usage
-                / len(self.config.deployments)
-                / deployment.resources
+                    edge_resources
+                    * self.base_usage
+                    / len(self.config.deployments)
+                    / deployment.resources
             )
             replica = sum(share) / len(share)
             base_state[deployment] = max(round(replica), 1)
@@ -67,16 +86,16 @@ class WavyScenario(Scenario):
 
         cycles_start = 0
         for (deployment_ind, deployment) in enumerate(
-            self.config.deployments[: self.number_of_deployments]
+                self.config.deployments[: self.number_of_deployments]
         ):
             cycles_len = (self.config.number_of_cycles - cycles_start) // (
-                self.number_of_deployments - deployment_ind
+                    self.number_of_deployments - deployment_ind
             )
             cycle_end = cycles_start + cycles_len
 
             additional = 0
             while (
-                (base_usage + additional * deployment.resources) <= all_resources
+                    (base_usage + additional * deployment.resources) <= all_resources
             ).all():
                 additional += 1
             additional -= 1

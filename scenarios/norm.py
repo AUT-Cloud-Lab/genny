@@ -1,10 +1,10 @@
+import os
+from typing import List, Tuple
+
 import numpy as np
 
-from typing import List
-
-from data.scen import Frame
 from data.base import Config
-
+from data.scen import Frame
 from scenarios.base import Scenario
 from scenarios.decorators import register_scenario
 
@@ -22,6 +22,26 @@ class NormalScenario(Scenario):
             print(str(e))
 
             raise Exception()
+
+    def get_out_paths(self) -> Tuple[str, str]:
+        if not os.path.exists("out"):
+            print(
+                f"""
+            No out direction found or multiple out directories found.
+            Path: {os.getcwd()}
+            """
+            )
+
+        base_dir = "out"
+        base_dir = os.path.join(base_dir, self.name)
+        self.ensure_directory(base_dir)
+
+        f_name = "_".join(map(str, self.get_properties()))
+
+        return (
+            os.path.join(base_dir, f"normal_scenario_{f_name}.json"),
+            os.path.join(base_dir, f"normal_resource_{f_name}.csv"),
+        )
 
     def get_properties(self) -> str:
         return [self.mean, self.sigma]

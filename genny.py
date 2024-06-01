@@ -27,8 +27,8 @@ def main():
     scenario_content, resource_content = cycles_content(frames, config)
     with open(scenario_path, "w") as f:
         f.write(scenario_content)
-    with open(resource_path, "w") as f:
-        f.write(resource_content)
+    # with open(resource_path, "w") as f:
+    #     f.write(resource_content)
 
     return 0
 

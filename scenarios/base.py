@@ -1,10 +1,8 @@
 import os
-import pathlib
-
 from typing import List, Tuple
 
-from data.scen import Frame
 from data.base import Config
+from data.scen import Frame
 
 
 class Scenario:
@@ -13,6 +11,10 @@ class Scenario:
 
     def get_properties(self) -> str:
         raise NotImplementedError
+
+    def ensure_directory(self, path) -> None:
+        if not os.path.exists(path):
+            os.makedirs(path)
 
     def get_out_paths(self) -> Tuple[str, str]:
         if not os.path.exists("out"):
