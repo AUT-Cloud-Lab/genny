@@ -52,7 +52,7 @@ class NormalScenario(Scenario):
         )
 
         frames: List[Frame] = [
-            Frame(replicas={}) for _ in range(self.config.number_of_cycles)
+            Frame(replicas = {}) for _ in range(self.config.number_of_cycles)
         ]
 
         for deployment in self.config.deployments:
@@ -66,12 +66,12 @@ class NormalScenario(Scenario):
                     mean_replica, sigma_replica, self.config.number_of_cycles
                 )
             )
-            print(f"{coef}")
+            # print(f"{coef}")
             for i in range(len(replicas)):
                 replicas[i] = round(replicas[i])
                 replicas[i] = max(replicas[i], 1)
 
                 frames[i].replicas[deployment] = replicas[i]
-            print(replicas)
+            # print(replicas)
 
         return frames
