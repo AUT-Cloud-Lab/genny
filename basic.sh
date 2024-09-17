@@ -5,7 +5,7 @@ echo "Should activate the venv!"
 # normals
 cmd="python3 genny.py normal"
 for mean in  0.75 1 1.25; do
-    for sigma in 0.1 0.5 0.7; do
+    for sigma in 0.4;  do
         cur_cmd="${cmd} ${mean} ${sigma} "
         eval $cur_cmd
 
